@@ -92,3 +92,50 @@ async function testQuestion() {
 // testQuestion();
 console.log(chalk.green("正解！！"));
 
+class Stage {
+    answer: string; // 解答の状態
+    leftAttempts: number = 5; // 試行回数
+    question: Question; // 出題中の問題
+
+    constructor(question: Question) {
+        this.question = question;
+        // answerにブランク"_"の羅列を設定
+        this.answer = new Array(question.word.length).fill("_").join("");
+    }
+
+    updateAnswer(userInput: string = ""): void {
+        if (!userInput) return;
+
+        const regex = new RegExp(userInput, "g");
+        const answerArray = this.answer.split("");
+
+        let matches: RegExpExecArray | null;
+
+        while ((matches = regex.exec(this.question.word))) {
+            const foundIdx = matches.index;
+            answerArray.splice(foundIdx, userInput.length, ...userInput);
+
+            this.answer = answerArray.join("");
+        }
+    }
+
+    isTooLong(userInput: string): boolean {
+        return userInput.length > this.question.word.length;
+    }
+
+    isIncludes(userInput: string): boolean {
+        return this.question.word.includes(userInput);
+    }
+
+    isCorrect(): boolean {
+        return this.answer === this.question.word;
+    }
+
+    decrementAttempts(): number {
+        return --this.leftAttempts;
+    }
+
+    isGameOver(): boolean {
+        return this.leftAttempts === 0;
+    }
+}
