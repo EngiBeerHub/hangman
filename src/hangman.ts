@@ -1,5 +1,7 @@
 import rawData from "./data/questions.test.json";
 import readlinePromises from "readline/promises";
+import chalk from "chalk";
+import figlet from "figlet";
 
 interface Question {
     word: string;
@@ -49,10 +51,12 @@ interface UserInterface {
 
     destroy(): void;
 
-    // otput(message: string, color?: Color): void;
-    //
-    // outputAnswer(message: string): void;
+    output(message: string, color?: Color): void;
+
+    outputAnswer(message: string): void;
 }
+
+type Color = "red" | "green" | "yellow" | "white";
 
 const rl = readlinePromises.createInterface({
     input: process.stdin,
@@ -69,6 +73,12 @@ const CLI: UserInterface = {
     },
     destroy() {
         rl.close();
+    },
+    output(message: string, color: Color = "white") {
+        console.log(chalk[color](message), "\n");
+    },
+    outputAnswer(message: string) {
+        console.log(figlet.textSync(message, {font: "Big"}), "\n");
     }
 };
 
@@ -79,4 +89,6 @@ async function testQuestion() {
     CLI.destroy();
 }
 
-testQuestion();
+// testQuestion();
+console.log(chalk.green("正解！！"));
+
